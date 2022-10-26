@@ -1,0 +1,20 @@
+class bprint:
+    PINK = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    RED = '\u001b[31m'
+    BLACK = '\u001b[30m'
+    WHITE = '\u001b[37m'
+    GREEN = '\u001b[32m'
+    YELLOW = '\u001b[33m'
+    BLUE = '\u001b[34m'
+    MAGENTA = '\u001b[35m'
+    CYAN = '\u001b[36m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+    def p(msg, color): print(f'{color}{msg}{bprint.ENDC}', end=" ")

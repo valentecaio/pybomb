@@ -24,13 +24,13 @@ def on_press_space(_): bombs.append(Bomb(p1.x, p1.y, 12, p1.fire))
 def generate_board():
     global board
 
-    # create unbreakable walls
+    # create breakable walls
     for i in range(X_MAX):
         board.append([])
         for j in range(Y_MAX):
             board[i].append(random.randint(0, 1))
 
-    # create ununbreakable walls
+    # create unbreakable walls
     for i in range(1, X_MAX, 2):
         for j in range(1, Y_MAX, 2):
             board[i][j] = 3

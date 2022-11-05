@@ -27,8 +27,6 @@ def on_press_space(_):
 
 # create a new board with random walls
 def generate_board():
-    global board
-
     # allocate colunms
     for i in range(X_MAX): board.append([])
 
@@ -92,20 +90,16 @@ def move_player(x, y):
 
 # every block that is not a type 3 (unbreakable) should become fire
 def block_explode(x, y):
-    global board
     if board[x][y] != 3: board[x][y] = 2
 
 
 # transform fire blocks into empty spaces
 def block_free(x, y):
-    global board
     if board[x][y] == 2: board[x][y] = 0
 
 
 # when timer is 0 the bomb explodes; when timer is -3 the fire disappears
 def process_bombs():
-    global bombs, board
-
     # decrease timers
     for i in range(len(bombs)):
         bombs[i].timer -= 1

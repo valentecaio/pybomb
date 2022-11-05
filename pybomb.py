@@ -7,18 +7,23 @@ from player import Player
 from bomb import Bomb
 
 # board dimensions, must be even
-X_MAX = Y_MAX = 15
+X_MAX = 15
+Y_MAX = 17
 
 board = [] # matrix of integers -> 0 = empty space, 1 = breakable wall, 2 = fire, 3 = unbreakable wall
 bombs = [] # list of Bomb
-p1 = Player(0, 0, 1, 1)
+p1 = Player(0, 0, 4, 1)
 
 # keyboard controls: w, a, s, d, space
 def on_press_w(_): move_player(p1.x, p1.y-1)
 def on_press_a(_): move_player(p1.x-1, p1.y)
 def on_press_s(_): move_player(p1.x, p1.y+1)
 def on_press_d(_): move_player(p1.x+1, p1.y)
-def on_press_space(_): bombs.append(Bomb(p1.x, p1.y, 12, p1.fire))
+
+def on_press_space(_):
+    if p1.bombs > len(bombs):
+        bombs.append(Bomb(p1.x, p1.y, 12, p1.fire))
+
 
 # create a new board with random walls
 def generate_board():
@@ -35,7 +40,7 @@ def generate_board():
         for j in range(1, Y_MAX, 2):
             board[i][j] = 3
 
-    # reserve borders for players
+    # reserve corners for players
     board[0][0]   = board[1][0]   = board[0][1] = 0
     board[0][-1]  = board[1][-1]  = board[0][-2] = 0
     board[-1][0]  = board[-2][0]  = board[-1][1] = 0
@@ -44,7 +49,7 @@ def generate_board():
 
 # draw board, players and bombs
 def draw():
-    for i in range(X_MAX+2): bprint.p("X", bprint.PINK) # upper board border
+    for i in range(Y_MAX+2): bprint.p("X", bprint.PINK) # upper board border
     print("")
     for i in range(X_MAX):
         bprint.p("X", bprint.PINK) # left board border
@@ -65,7 +70,7 @@ def draw():
             elif board[i][j] == 3: bprint.p("X", bprint.PINK)  # block is an unbreakable wall
         bprint.p("X", bprint.PINK) # right board border
         print("")
-    for i in range(X_MAX+2): bprint.p("X", bprint.PINK) # bottom board border
+    for i in range(Y_MAX+2): bprint.p("X", bprint.PINK) # bottom board border
     print("\n")
     print(f'{bprint.OKGREEN}Player 1: 🔥{p1.fire} 💣{p1.bombs}{bprint.ENDC}') # player status
 
@@ -78,15 +83,15 @@ def move_player(x, y):
 
 
 # every block that is not a type 3 (unbreakable) should become fire
-def block_explode(x, y):
+def block_explode(y, x):
     global board
-    if board[x][y] != 3: board[x][y] = 2
+    if board[y][x] != 3: board[y][x] = 2
 
 
 # transform fire blocks into empty spaces
-def block_free(x, y):
+def block_free(y, x):
     global board
-    if board[x][y] == 2: board[x][y] = 0
+    if board[y][x] == 2: board[y][x] = 0
 
 
 # when timer is 0 the bomb explodes; when timer is -3 the fire disappears
@@ -106,22 +111,20 @@ def process_bombs():
         if bombs[i].timer == -3:
             exploded.append(i)
 
-    # TODO: this part only works if range=1
     # transform adjacent walls into fire
     for b in exploding:
         bomb = bombs[b]
-        for i in (0, bomb.range):
+        for i in range(1, bomb.range+1):
             block_explode(bomb.y+i, bomb.x)
             block_explode(bomb.y-i, bomb.x)
             block_explode(bomb.y, bomb.x+i)
             block_explode(bomb.y, bomb.x-i)
 
-    # TODO: this part only works if range=1
     # transform fire blocks into empty squares and delete bomb from list
     for b in exploded:
         bomb = bombs[b]
         print(bomb.range)
-        for i in (0, bomb.range):
+        for i in range(1, bomb.range+1):
             block_free(bomb.y+i, bomb.x)
             block_free(bomb.y-i, bomb.x)
             block_free(bomb.y, bomb.x+i)

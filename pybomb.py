@@ -89,13 +89,28 @@ def move_player(x, y):
 
 
 # every block that is not a type 3 (unbreakable) should become fire
-def block_explode(x, y):
-    if board[x][y] != 3: board[x][y] = 2
+def block_explode(bomb, direction):
+    i=0; x=bomb.x; y=bomb.y
+    while i<=bomb.range and x<X_MAX and y<Y_MAX and x>0 and y>0 and board[x][y]!=3:
+        board[x][y] = 2
+        if direction == 'right':  x+=1
+        elif direction == 'left': x-=1
+        elif direction == 'down': y+=1
+        elif direction == 'up':   y-=1
+        i += 1
 
 
 # transform fire blocks into empty spaces
-def block_free(x, y):
-    if board[x][y] == 2: board[x][y] = 0
+def block_free(bomb, direction):
+    i=0; x=bomb.x; y=bomb.y
+    while i<=bomb.range and x<X_MAX and y<Y_MAX and x>0 and y>0 and board[x][y]!=3:
+        board[x][y] = 0
+        if direction == 'right':  x+=1
+        elif direction == 'left': x-=1
+        elif direction == 'down': y+=1
+        elif direction == 'up':   y-=1
+        i += 1
+
 
 
 # when timer is 0 the bomb explodes; when timer is -3 the fire disappears
@@ -115,23 +130,17 @@ def process_bombs():
 
     # transform adjacent walls into fire
     for b in exploding:
-        bomb = bombs[b]
-        for i in range(1, bomb.range+1):
-            block_explode(bomb.x+i, bomb.y)
-            block_explode(bomb.x-i, bomb.y)
-            block_explode(bomb.x, bomb.y+i)
-            block_explode(bomb.x, bomb.y-i)
+        block_explode(bombs[b], 'up')
+        block_explode(bombs[b], 'down')
+        block_explode(bombs[b], 'left')
+        block_explode(bombs[b], 'right')
 
     # transform fire blocks into empty squares and delete bomb from list
     for b in exploded:
-        bomb = bombs[b]
-        print(bomb.range)
-        for i in range(1, bomb.range+1):
-            block_free(bomb.x+i, bomb.y)
-            block_free(bomb.x-i, bomb.y)
-            block_free(bomb.x, bomb.y+i)
-            block_free(bomb.x, bomb.y-i)
-        board[bomb.y][bomb.x] = 0
+        block_free(bombs[b], 'up')
+        block_free(bombs[b], 'down')
+        block_free(bombs[b], 'left')
+        block_free(bombs[b], 'right')
         del bombs[b]
 
 

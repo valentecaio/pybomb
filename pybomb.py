@@ -25,6 +25,13 @@ def on_press_space(_):
         bombs.append(Bomb(p1.x, p1.y, 12, p1.fire))
 
 
+# move player if new position is valid
+def move_player(x, y):
+    if board[x][y] == 0 and x>=0 and y>=0 and x<=X_MAX and y<=Y_MAX:
+        p1.x = x
+        p1.y = y
+
+
 # create a new board with random walls
 def generate_board():
     # allocate colunms
@@ -81,13 +88,6 @@ def draw():
     print(f'{bprint.OKGREEN}Player 1: 🔥{p1.fire} 💣{p1.bombs}{bprint.ENDC}') # player status
 
 
-# move player if new position is valid
-def move_player(x, y):
-    if board[x][y] == 0 and x>=0 and y>=0 and x<=X_MAX and y<=Y_MAX:
-        p1.x = x
-        p1.y = y
-
-
 # every block that is not a type 3 (unbreakable) should become fire
 def block_explode(bomb, direction):
     i=0; x=bomb.x; y=bomb.y
@@ -110,7 +110,6 @@ def block_free(bomb, direction):
         elif direction == 'down': y+=1
         elif direction == 'up':   y-=1
         i += 1
-
 
 
 # when timer is 0 the bomb explodes; when timer is -3 the fire disappears
